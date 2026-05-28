@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WheelZit — Ride by the Hour</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080C14;--bg2:#0D1320;--bg3:#111927;
+  --blue:#1E6FFF;--blue2:#3D8BFF;--blue3:#0A4FD4;
+  --amber:#FF9500;--amber2:#FFB340;
+  --white:#F0F4FF;--muted:#6B7A99;--border:rgba(255,255,255,0.07);
+  --card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);
+  --green:#00C896;--red:#FF4757;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(8,12,20,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.05em;color:var(--white);display:flex;align-items:center;gap:.4rem}
+.logo-dot{color:var(--amber)}
+.nav-links{display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:40px;padding:4px}
+.nl{padding:6px 18px;border-radius:40px;cursor:pointer;font-size:.82rem;font-weight:500;color:var(--muted);transition:all .2s;border:none;background:none;font-family:'Outfit',sans-serif}
+.nl.on{background:var(--blue);color:#fff}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.nav-badge{background:rgba(255,149,0,.15);border:1px solid rgba(255,149,0,.3);color:var(--amber);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:20px}
+.nav-btn{background:var(--blue);color:#fff;border:none;padding:8px 20px;border-radius:30px;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:var(--blue2);transform:translateY(-1px)}
+
+/* PAGES */
+.page{display:none;padding-top:60px;min-height:100vh}
+.page.on{display:block}
+
+/* ====== HOME ====== */
+.hero{min-height:calc(100vh - 60px);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:4rem;padding:4rem 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(30,111,255,.12) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 10% 80%,rgba(255,149,0,.06) 0%,transparent 50%);pointer-events:none}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none}
+.hero-content{position:relative;z-index:2}
+.hero-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(30,111,255,.12);border:1px solid rgba(30,111,255,.25);border-radius:30px;padding:.35rem 1rem;font-size:.78rem;font-weight:500;color:var(--blue2);margin-bottom:1.5rem}
+.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--blue2);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,7vw,6rem);line-height:.95;letter-spacing:.02em;margin-bottom:1.5rem}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero p{font-size:1.05rem;color:var(--muted);line-height:1.8;margin-bottom:2.5rem;max-width:480px}
+.cta-row{display:flex;gap:1rem;flex-wrap:wrap}
+.cta-primary{background:var(--blue);color:#fff;border:none;padding:.9rem 2.2rem;border-radius:40px;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:.02em}
+.cta-primary:hover{background:var(--blue2);transform:translateY(-3px);box-shadow:0 12px 30px rgba(30,111,255,.3)}
+.cta-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.2);padding:.9rem 2.2rem;border-radius:40px;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s}
+.cta-outline:hover{border-color:var(--amber);color:var(--amber)}
+.stats-row{display:flex;gap:2.5rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+.stat-item .sn{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--amber);letter-spacing:.03em}
+.stat-item .sl{font-size:.75rem;color:var(--muted);font-weight:500;margin-top:2px}
+
+/* PHONE MOCKUP */
+.hero-phone{position:relative;z-index:2;display:flex;justify-content:center}
+.phone-wrap{width:300px;background:linear-gradient(145deg,#1a2035,#0d1420);border-radius:44px;padding:14px;box-shadow:0 60px 120px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.1);position:relative}
+.phone-screen{background:var(--bg2);border-radius:32px;overflow:hidden;min-height:580px}
+.pscreen-header{background:linear-gradient(135deg,var(--blue3),var(--blue));padding:1.2rem 1rem 1rem;display:flex;justify-content:space-between;align-items:center}
+.psh-left h4{font-size:1rem;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em}
+.psh-left span{font-size:.7rem;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:.3rem;margin-top:2px}
+.psh-loc{width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.psh-right{background:rgba(255,255,255,.12);border-radius:10px;padding:6px 10px;font-size:.7rem;color:#fff;font-weight:600}
+.pscreen-map{height:140px;background:linear-gradient(135deg,#1a2d4a,#162040);position:relative;overflow:hidden}
+.map-roads{position:absolute;inset:0}
+.mroad{position:absolute;background:rgba(255,255,255,.1)}
+.mroad.h{height:1px;left:0;right:0}
+.mroad.v{width:1px;top:0;bottom:0}
+.map-bikes{position:absolute;inset:0}
+.map-pin{position:absolute;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.mp-blue{background:rgba(30,111,255,.9);box-shadow:0 0 0 4px rgba(30,111,255,.2)}
+.mp-amber{background:rgba(255,149,0,.9);box-shadow:0 0 0 4px rgba(255,149,0,.2)}
+.map-you{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--blue2);box-shadow:0 0 0 4px rgba(30,111,255,.3),0 0 0 8px rgba(30,111,255,.1)}
+.pscreen-search{padding:.8rem .8rem .5rem;position:relative}
+.psearch{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.6rem .9rem .6rem 2.2rem;font-size:.8rem;color:var(--white);font-family:'Outfit',sans-serif;outline:none}
+.psearch-icon{position:absolute;left:1.4rem;top:50%;transform:translateY(-50%);font-size:.85rem;opacity:.5}
+.bikes-section{padding:.5rem .8rem .8rem}
+.bikes-section h5{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+.pbike-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:.7rem .9rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .2s}
+.pbike-card:hover,.pbike-card.sel{background:rgba(30,111,255,.1);border-color:rgba(30,111,255,.3)}
+.pbc-left .pbike-name{font-size:.82rem;font-weight:600;color:var(--white)}
+.pbc-left .pbike-info{font-size:.67rem;color:var(--muted);margin-top:2px;display:flex;gap:.5rem}
+.pbc-right{text-align:right}
+.pbc-price{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--blue2);letter-spacing:.03em}
+.pbc-unit{font-size:.62rem;color:var(--muted)}
+.pbc-avail{font-size:.62rem;color:var(--green);font-weight:600}
+.book-strip{margin:.5rem .8rem .8rem;background:var(--blue);border-radius:14px;padding:.8rem;text-align:center;cursor:pointer;transition:all .2s}
+.book-strip:hover{background:var(--blue2)}
+.book-strip span{font-size:.88rem;font-weight:700;color:#fff;letter-spacing:.03em}
+
+/* BOOKING PAGE */
+.booking-hero{background:linear-gradient(135deg,var(--bg3),var(--bg2));padding:2.5rem 3rem;border-bottom:1px solid var(--border)}
+.booking-hero h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:.04em;margin-bottom:.4rem}
+.booking-hero p{color:var(--muted);font-size:.95rem}
+.booking-layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;padding:2rem 3rem;max-width:1200px;margin:0 auto}
+.filter-panel{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:1.5rem;height:fit-content}
+.fp-title{font-size:1rem;font-weight:700;margin-bottom:1.2rem;color:var(--white)}
+.fg{margin-bottom:1.1rem}
+.fg label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem}
+.fg select,.fg input[type=text],.fg input[type=date],.fg input[type=time]{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:.6rem .9rem;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--white);outline:none;transition:border .2s;-webkit-appearance:none}
+.fg select:focus,.fg input:focus{border-color:rgba(30,111,255,.5)}
+.fg select option{background:#0d1320;color:#fff}
+input[type=range]{width:100%;accent-color:var(--blue);height:4px;margin-top:.3rem}
+.range-lbl{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:.3rem}
+.apply-btn{width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:.8rem;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:.5rem}
+.apply-btn:hover{background:var(--blue2)}
+.bikes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.bike-card{background:var(--bg3);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .25s}
+.bike-card:hover{transform:translateY(-5px);border-color:rgba(30,111,255,.3);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.bc-img{height:150px;background:linear-gradient(135deg,rgba(30,111,255,.08),rgba(30,111,255,.03));display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative}
+.bc-badge{position:absolute;top:10px;right:10px;background:rgba(0,200,150,.15);border:1px solid rgba(0,200,150,.3);color:var(--green);font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.04em}
+.bc-body{padding:1rem 1.2rem}
+.bc-body h4{font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.3rem}
+.bc-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.7rem}
+.bc-tag{background:rgba(255,255,255,.06);color:var(--muted);font-size:.65rem;font-weight:600;padding:3px 8px;border-radius:8px}
+.bc-foot{display:flex;justify-content:space-between;align-items:center}
+.bc-price{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--blue2);letter-spacing:.03em}
+.bc-price small{font-size:.65rem;font-weight:400;color:var(--muted);font-family:'Outfit',sans-serif;letter-spacing:0}
+.bc-rating{font-size:.75rem;color:var(--amber);font-weight:600}
+.bc-dist{font-size:.72rem;color:var(--muted)}
+.book-btn{width:100%;background:rgba(30,111,255,.12);border:1px solid rgba(30,111,255,.25);color:var(--blue2);border-radius:10px;padding:.55rem;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:.8rem}
+.book-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* DASHBOARD */
+.dash-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+.sidebar{background:var(--bg3);border-right:1px solid var(--border);padding:1.5rem 1rem}
+.sb-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--white);padding:.5rem .8rem 1rem;letter-spacing:.05em;border-bottom:1px solid var(--border);margin-bottom:.8rem}
+.sb-logo span{color:var(--amber)}
+.sb-section{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:.3rem .8rem;margin:.8rem 0 .3rem}
+.sb-item{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-radius:12px;cursor:pointer;color:rgba(255,255,255,.55);font-size:.87rem;font-weight:500;transition:all .2s;margin-bottom:2px}
+.sb-item:hover,.sb-item.on{background:rgba(255,255,255,.06);color:var(--white)}
+.sb-item.on{background:rgba(30,111,255,.12);color:var(--blue2)}
+.sb-icon{font-size:1rem;width:20px;text-align:center}
+.dash-main{padding:2rem;overflow-y:auto}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.dash-top h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em}
+.dash-top span{font-size:.85rem;color:var(--muted)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.kpi{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:1.2rem 1.3rem;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.k1::after{background:var(--blue)}
+.kpi.k2::after{background:var(--amber)}
+.kpi.k3::after{background:var(--green)}
+.kpi.k4::after{background:#A78BFA}
+.kpi-icon{font-size:1.3rem;margin-bottom:.5rem}
+.kpi-lbl{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.03em}
+.kpi-sub{font-size:.72rem;color:var(--green);margin-top:.2rem;font-weight:500}
+.dash-grid2{display:grid;grid-template-columns:1fr 320px;gap:1.5rem}
+.dash-panel{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:1.3rem}
+.dp-title{font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+.dp-title span{font-size:.72rem;color:var(--blue2);cursor:pointer;font-weight:500}
+.rides-table{width:100%;border-collapse:collapse}
+.rides-table th{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:.5rem .7rem;text-align:left;border-bottom:1px solid var(--border)}
+.rides-table td{padding:.65rem .7rem;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.03);color:var(--white)}
+.status-pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.65rem;font-weight:700}
+.sp-active{background:rgba(0,200,150,.12);color:var(--green);border:1px solid rgba(0,200,150,.2)}
+.sp-done{background:rgba(30,111,255,.12);color:var(--blue2);border:1px solid rgba(30,111,255,.2)}
+.sp-pend{background:rgba(255,149,0,.12);color:var(--amber);border:1px solid rgba(255,149,0,.2)}
+.map-panel{height:220px;background:linear-gradient(135deg,#1a2d4a,#0f1d35);border-radius:12px;position:relative;overflow:hidden;margin-top:.5rem}
+.mp-road{position:absolute;background:rgba(255,255,255,.08)}
+.mp-road.h{height:2px;left:0;right:0}
+.mp-road.v{width:2px;top:0;bottom:0}
+.mp-pin{position:absolute;font-size:1.2rem;animation:float 3s ease-in-out infinite}
+.quick-stat{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border)}
+.quick-stat:last-child{border-bottom:none}
+.qs-label{font-size:.82rem;color:var(--muted)}
+.qs-val{font-size:.9rem;font-weight:700;color:var(--white)}
+
+/* PITCH PAGE */
+.pitch-page{background:var(--bg);color:var(--white)}
+.pitch-hero{background:linear-gradient(135deg,#080C14 0%,#0A1628 50%,#080C14 100%);padding:5rem 4rem;text-align:center;position:relative;overflow:hidden}
+.pitch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(30,111,255,.1) 0%,transparent 60%)}
+.pitch-hero h2{font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:.05em;margin-bottom:1rem;position:relative}
+.pitch-hero h2 em{font-style:normal;color:var(--amber)}
+.pitch-hero p{color:var(--muted);font-size:1.1rem;max-width:600px;margin:0 auto;position:relative;line-height:1.8}
+.pitch-cards{max-width:900px;margin:0 auto;padding:3rem 4rem;display:grid;gap:1.2rem}
+.pc{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2rem;transition:all .25s;cursor:pointer}
+.pc:hover{border-color:rgba(30,111,255,.3);transform:translateX(4px)}
+.pc-head{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.pc-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.pc h3{font-size:1.1rem;font-weight:700}
+.pc p{color:var(--muted);line-height:1.7;font-size:.92rem}
+.metrics-3{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1.2rem}
+.m3{text-align:center;background:rgba(255,255,255,.04);border-radius:12px;padding:1rem}
+.m3-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--blue2);letter-spacing:.03em}
+.m3-lbl{font-size:.72rem;color:var(--muted);margin-top:2px}
+.ask-box{background:linear-gradient(135deg,rgba(30,111,255,.12),rgba(30,111,255,.04));border:1px solid rgba(30,111,255,.25);border-radius:20px;padding:2.5rem;text-align:center;margin-top:1rem}
+.ask-amt{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--amber);letter-spacing:.05em}
+.ask-sub{color:var(--muted);margin-bottom:1.5rem;font-size:.95rem}
+.ask-cta{background:var(--blue);color:#fff;border:none;padding:.9rem 2.5rem;border-radius:30px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .25s}
+.ask-cta:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:0 12px 30px rgba(30,111,255,.3)}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center}
+.modal-bg.on{display:flex}
+.modal{background:var(--bg3);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:2rem;max-width:460px;width:92%;max-height:85vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.08);border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;color:var(--white);font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;margin-bottom:1.5rem}
+.mfg{margin-bottom:.9rem}
+.mfg label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem}
+.mfg input,.mfg select{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;padding:.65rem 1rem;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--white);outline:none;transition:border .2s;-webkit-appearance:none}
+.mfg input:focus,.mfg select:focus{border-color:rgba(30,111,255,.5)}
+.mfg select option{background:#0d1320}
+.total-box{background:rgba(255,255,255,.04);border-radius:14px;padding:1rem 1.2rem;margin:1rem 0}
+.tr{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:.35rem}
+.tr.main{font-size:.95rem;font-weight:700;color:var(--white);border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem}
+.confirm-btn{width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:.85rem;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
+.confirm-btn:hover{background:var(--blue2)}
+.success-wrap{text-align:center;padding:1rem}
+.success-emoji{font-size:4rem;margin-bottom:1rem}
+.success-wrap h4{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;margin-bottom:.5rem}
+.success-wrap p{color:var(--muted);font-size:.9rem}
+.booking-id{background:rgba(30,111,255,.1);border:1px solid rgba(30,111,255,.2);color:var(--blue2);font-size:.85rem;font-weight:700;padding:.4rem 1.2rem;border-radius:8px;display:inline-block;margin:.8rem 0;letter-spacing:.05em}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:2rem}
+  .hero-phone{display:none}
+  .booking-layout{grid-template-columns:1fr;padding:1rem}
+  .dash-layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Wheel<span class="logo-dot">Z</span>it</div>
+  <div class="nav-links">
+    <button class="nl on" onclick="showPage('home',this)">Home</button>
+    <button class="nl" onclick="showPage('booking',this)">Find Bike</button>
+    <button class="nl" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="nl" onclick="showPage('pitch',this)">Investor Pitch</button>
+  </div>
+  <div class="nav-right">
+    <div class="nav-badge">Beta · NCR</div>
+    <button class="nav-btn" onclick="showPage('booking',document.querySelectorAll('.nl')[1])">Book Now</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page on" id="p-home">
+  <div class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-content">
+      <div class="hero-pill"><span class="hero-pill-dot"></span>Now live in Ghaziabad, NCR</div>
+      <h1>Rent any bike,<br>by the <em>hour.</em><br>Near you.</h1>
+      <p>WheelZit connects idle bikes with riders who need them — verified, GPS-tracked, and insured. No daily lock-in. Starting ₹50/hr.</p>
+      <div class="cta-row">
+        <button class="cta-primary" onclick="showPage('booking',document.querySelectorAll('.nl')[1])">Find a Bike Near Me →</button>
+        <button class="cta-outline" onclick="showPage('pitch',document.querySelectorAll('.nl')[3])">See Investor Pitch</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item"><div class="sn">500+</div><div class="sl">Rides Completed</div></div>
+        <div class="stat-item"><div class="sn">₹50</div><div class="sl">Starting per hour</div></div>
+        <div class="stat-item"><div class="sn">4.9★</div><div class="sl">Avg Rating</div></div>
+        <div class="stat-item"><div class="sn">100%</div><div class="sl">GPS Verified</div></div>
+      </div>
+    </div>
+    <div class="hero-phone">
+      <div class="phone-wrap">
+        <div class="phone-screen">
+          <div class="pscreen-header">
+            <div class="psh-left">
+              <h4>WheelZit</h4>
+              <span><div class="psh-loc"></div>Ghaziabad, NCR</span>
+            </div>
+            <div class="psh-right">GPS ON</div>
+          </div>
+          <div class="pscreen-map">
+            <div class="map-roads">
+              <div class="mroad h" style="top:40%"></div>
+              <div class="mroad h" style="top:70%"></div>
+              <div class="mroad v" style="left:30%"></div>
+              <div class="mroad v" style="left:65%"></div>
+            </div>
+            <div class="map-bikes">
+              <div class="map-pin mp-blue" style="top:20%;left:18%;animation-delay:.3s">🏍️</div>
+              <div class="map-pin mp-blue" style="top:55%;left:55%;animation-delay:.8s">🛵</div>
+              <div class="map-pin mp-blue" style="top:15%;left:68%;animation-delay:1.2s">🏍️</div>
+              <div class="map-pin mp-amber" style="top:65%;left:75%;animation-delay:.5s">🛵</div>
+            </div>
+            <div class="map-you"></div>
+          </div>
+          <div class="pscreen-search">
+            <div style="position:relative">
+              <span class="psearch-icon">🔍</span>
+              <input class="psearch" placeholder="Search bikes near you..." readonly>
+            </div>
+          </div>
+          <div class="bikes-section">
+            <h5>Available near you</h5>
+            <div class="pbike-card sel">
+              <div class="pbc-left">
+                <div class="pbike-name">Honda Activa 6G</div>
+                <div class="pbike-info"><span>⭐ 4.9</span><span>0.3 km</span><span>Verified</span></div>
+              </div>
+              <div class="pbc-right">
+                <div class="pbc-price">₹60<small style="font-size:.6rem;font-family:Outfit">/hr</small></div>
+                <div class="pbc-avail">● Available</div>
+              </div>
+            </div>
+            <div class="pbike-card">
+              <div class="pbc-left">
+                <div class="pbike-name">Royal Enfield 350</div>
+                <div class="pbike-info"><span>⭐ 5.0</span><span>0.8 km</span><span>Verified</span></div>
+              </div>
+              <div class="pbc-right">
+                <div class="pbc-price">₹160<small style="font-size:.6rem;font-family:Outfit">/hr</small></div>
+                <div class="pbc-avail">● Available</div>
+              </div>
+            </div>
+            <div class="pbike-card">
+              <div class="pbc-left">
+                <div class="pbike-name">TVS Ntorq 125</div>
+                <div class="pbike-info"><span>⭐ 4.8</span><span>1.1 km</span><span>Verified</span></div>
+              </div>
+              <div class="pbc-right">
+                <div class="pbc-price">₹85<small style="font-size:.6rem;font-family:Outfit">/hr</small></div>
+                <div class="pbc-avail">● Available</div>
+              </div>
+            </div>
+          </div>
+          <div class="book-strip" onclick="showPage('booking',document.querySelectorAll('.nl')[1])">
+            <span>Book Now — From ₹50/hr →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING -->
+<div class="page" id="p-booking">
+  <div class="booking-hero">
+    <h2>Find Your Ride</h2>
+    <p>Verified bikes near you — book by the hour, half-day or full day</p>
+  </div>
+  <div class="booking-layout">
+    <div class="filter-panel">
+      <div class="fp-title">Filter Bikes</div>
+      <div class="fg"><label>Bike Type</label>
+        <select id="fType" onchange="filterBikes()">
+          <option value="all">All Types</option>
+          <option value="scooter">Scooter</option>
+          <option value="bike">Bike</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+      <div class="fg"><label>Duration</label>
+        <select id="fDur">
+          <option>Hourly</option><option>Half-Day (6hrs)</option><option>Full Day</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Max Price: <strong style="color:var(--blue2)" id="priceVal">₹200</strong>/hr</label>
+        <input type="range" min="50" max="200" value="200" id="priceRange" oninput="document.getElementById('priceVal').textContent='₹'+this.value;filterBikes()">
+        <div class="range-lbl"><span>₹50</span><span>₹200</span></div>
+      </div>
+      <div class="fg"><label>Sort By</label>
+        <select id="fSort" onchange="filterBikes()">
+          <option>Nearest First</option><option>Price: Low to High</option><option>Rating: High to Low</option>
+        </select>
+      </div>
+      <button class="apply-btn" onclick="filterBikes()">Apply Filters</button>
+    </div>
+    <div id="bikesGrid" class="bikes-grid"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="p-dashboard">
+  <div class="dash-layout">
+    <div class="sidebar">
+      <div class="sb-logo">Wheel<span>Z</span>it</div>
+      <div class="sb-section">Main</div>
+      <div class="sb-item on"><span class="sb-icon">📊</span>Overview</div>
+      <div class="sb-item"><span class="sb-icon">🏍️</span>My Rides</div>
+      <div class="sb-item"><span class="sb-icon">💳</span>Payments</div>
+      <div class="sb-item"><span class="sb-icon">📍</span>Live Map</div>
+      <div class="sb-section">Account</div>
+      <div class="sb-item"><span class="sb-icon">🔔</span>Notifications</div>
+      <div class="sb-item"><span class="sb-icon">⭐</span>Reviews</div>
+      <div class="sb-item"><span class="sb-icon">⚙️</span>Settings</div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-top">
+        <div>
+          <h2>Good Morning, Arjun 👋</h2>
+          <span>Your WheelZit dashboard · April 2026</span>
+        </div>
+        <button class="cta-primary" onclick="showPage('booking',document.querySelectorAll('.nl')[1])">+ Book a Ride</button>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi k1"><div class="kpi-icon">🏍️</div><div class="kpi-lbl">Total Rides</div><div class="kpi-val">24</div><div class="kpi-sub">↑ 3 this week</div></div>
+        <div class="kpi k2"><div class="kpi-icon">⏱️</div><div class="kpi-lbl">Hours Ridden</div><div class="kpi-val">61h</div><div class="kpi-sub">↑ 8h this week</div></div>
+        <div class="kpi k3"><div class="kpi-icon">💰</div><div class="kpi-lbl">Total Spent</div><div class="kpi-val">₹4,820</div><div class="kpi-sub">Avg ₹201/ride</div></div>
+        <div class="kpi k4"><div class="kpi-icon">⭐</div><div class="kpi-lbl">My Rating</div><div class="kpi-val">4.9</div><div class="kpi-sub">Top Rider badge</div></div>
+      </div>
+      <div class="dash-grid2">
+        <div class="dash-panel">
+          <div class="dp-title">Recent Rides <span>View All →</span></div>
+          <table class="rides-table">
+            <thead><tr><th>Bike</th><th>Date</th><th>Duration</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Bajaj Dominar 400</td><td>Apr 17</td><td>—</td><td>₹320</td><td><span class="status-pill sp-active">Active</span></td></tr>
+              <tr><td>Royal Enfield 350</td><td>Apr 16</td><td>3 hrs</td><td>₹480</td><td><span class="status-pill sp-done">Done</span></td></tr>
+              <tr><td>Honda Activa 6G</td><td>Apr 14</td><td>2 hrs</td><td>₹120</td><td><span class="status-pill sp-done">Done</span></td></tr>
+              <tr><td>TVS Ntorq 125</td><td>Apr 12</td><td>5 hrs</td><td>₹425</td><td><span class="status-pill sp-done">Done</span></td></tr>
+              <tr><td>Yamaha FZ-S</td><td>Apr 10</td><td>4 hrs</td><td>₹440</td><td><span class="status-pill sp-done">Done</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="dash-panel">
+          <div class="dp-title">Live Bike Map <span>Refresh</span></div>
+          <div class="map-panel">
+            <div class="mp-road h" style="top:38%"></div>
+            <div class="mp-road h" style="top:68%"></div>
+            <div class="mp-road v" style="left:32%"></div>
+            <div class="mp-road v" style="left:64%"></div>
+            <div class="mp-pin" style="top:18%;left:18%;animation-delay:.3s">🏍️</div>
+            <div class="mp-pin" style="top:52%;left:48%;animation-delay:.7s">🛵</div>
+            <div class="mp-pin" style="top:14%;left:70%;animation-delay:1.1s">🏍️</div>
+            <div class="mp-pin" style="top:62%;left:76%;animation-delay:1.5s">🛵</div>
+          </div>
+          <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:.7rem">12 bikes within 2km of you</p>
+          <div style="margin-top:1rem">
+            <div class="quick-stat"><span class="qs-label">Active bookings</span><span class="qs-val" style="color:var(--green)">1</span></div>
+            <div class="quick-stat"><span class="qs-label">Saved bikes</span><span class="qs-val">3</span></div>
+            <div class="quick-stat"><span class="qs-label">Wallet balance</span><span class="qs-val" style="color:var(--amber)">₹250</span></div>
+            <div class="quick-stat"><span class="qs-label">WheelZit Points</span><span class="qs-val" style="color:#A78BFA">1,240</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PITCH PAGE -->
+<div class="page" id="p-pitch">
+  <div class="pitch-hero">
+    <h2>Why <em>WheelZit</em> Will Win</h2>
+    <p>₹12,000 crore market. Less than 1% organised. Patent-pending IoT innovation. Built by an ECE founder who lives in NCR.</p>
+  </div>
+  <div class="pitch-cards">
+    <div class="pc">
+      <div class="pc-head">
+        <div class="pc-icon" style="background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.2)">🎯</div>
+        <h3>The Problem</h3>
+      </div>
+      <p>200 million bikes in India sit idle 18+ hours a day. Students, tourists, and gig workers can't rent a bike for just 2 hours. Daily shops charge ₹800 minimum. No GPS-tracked, KYC-verified, hourly platform exists in NCR.</p>
+    </div>
+    <div class="pc">
+      <div class="pc-head">
+        <div class="pc-icon" style="background:rgba(30,111,255,.12);border:1px solid rgba(30,111,255,.2)">💡</div>
+        <h3>Our Solution — WheelZit</h3>
+      </div>
+      <p>Asset-light marketplace — like Airbnb for bikes. Owners list idle bikes, riders book by the hour from ₹50. We earn 25% commission. Zero fleet means fast scaling. And our secret weapon: WheelGuard.</p>
+    </div>
+    <div class="pc" style="border-color:rgba(255,149,0,.2);background:rgba(255,149,0,.04)">
+      <div class="pc-head">
+        <div class="pc-icon" style="background:rgba(255,149,0,.15);border:1px solid rgba(255,149,0,.2)">⚡</div>
+        <h3>WheelGuard™ — Patent Pending</h3>
+      </div>
+      <p>A ₹1,200 IoT device (ESP32 + SIM800L GSM + GPS) installed under the bike seat. If theft is detected, press one button in the app — the engine cuts off remotely. GPS sends coordinates to police. <strong style="color:var(--amber)">No rental company in India has built this.</strong> Provisional patent filed April 2026.</p>
+    </div>
+    <div class="pc">
+      <div class="pc-head">
+        <div class="pc-icon" style="background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.2)">📈</div>
+        <h3>The Market</h3>
+      </div>
+      <p>Urban mobility growing 18–20% CAGR. No dominant player in hourly 2W rental in NCR. We are the only self-ride + hourly + verified + IoT-secured platform in the region.</p>
+      <div class="metrics-3">
+        <div class="m3"><div class="m3-num">₹12k Cr</div><div class="m3-lbl">Total Market (TAM)</div></div>
+        <div class="m3"><div class="m3-num">200M+</div><div class="m3-lbl">Bikes in India</div></div>
+        <div class="m3"><div class="m3-num">&lt;1%</div><div class="m3-lbl">Market Organised</div></div>
+      </div>
+    </div>
+    <div class="ask-box">
+      <div class="ask-amt">₹50 Lakhs</div>
+      <div class="ask-sub">Seed funding · 10–15% equity · ₹3–5Cr valuation<br>Break-even: Month 10 · Year 3 Revenue: ₹11.9 Crore</div>
+      <button class="ask-cta" onclick="alert('founder@wheelzit.in\nwheelzit.in\n+91 XXXXX XXXXX')">Get in Touch →</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-bg" id="bookModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nl').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+name).classList.add('on');
+  if(btn)btn.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+const bikes=[
+  {id:1,name:'Honda Activa 6G',type:'scooter',price:60,dist:.3,rating:4.9,emoji:'🛵',tags:['125cc','Automatic','AC','GPS']},
+  {id:2,name:'TVS Ntorq 125',type:'scooter',price:85,dist:.8,rating:4.8,emoji:'🛵',tags:['125cc','Sporty','Bluetooth']},
+  {id:3,name:'Yamaha FZ-S V3',type:'bike',price:100,dist:1.1,rating:4.9,emoji:'🏍️',tags:['150cc','Manual','Sporty']},
+  {id:4,name:'Royal Enfield Classic 350',type:'premium',price:160,dist:1.4,rating:5.0,emoji:'🏍️',tags:['350cc','Retro','Manual']},
+  {id:5,name:'Bajaj Dominar 400',type:'premium',price:180,dist:1.8,rating:4.8,emoji:'🏍️',tags:['400cc','Touring']},
+  {id:6,name:'Honda CB Shine',type:'bike',price:75,dist:.5,rating:4.7,emoji:'🏍️',tags:['125cc','Reliable']},
+  {id:7,name:'Suzuki Access 125',type:'scooter',price:65,dist:.9,rating:4.7,emoji:'🛵',tags:['125cc','Smooth']},
+  {id:8,name:'KTM Duke 200',type:'premium',price:140,dist:2.1,rating:4.9,emoji:'🏍️',tags:['200cc','Aggressive']},
+  {id:9,name:'Yamaha Aerox 155',type:'scooter',price:95,dist:1.2,rating:4.8,emoji:'🛵',tags:['155cc','Sporty']},
+];
+
+function renderBikes(list){
+  document.getElementById('bikesGrid').innerHTML=list.map(b=>`
+    <div class="bike-card" onclick="openBook(${b.id})">
+      <div class="bc-img">${b.emoji}<div class="bc-badge">Available</div></div>
+      <div class="bc-body">
+        <h4>${b.name}</h4>
+        <div class="bc-tags">${b.tags.map(t=>`<span class="bc-tag">${t}</span>`).join('')}</div>
+        <div class="bc-foot">
+          <div>
+            <div class="bc-price">₹${b.price}<small>/hr</small></div>
+            <div class="bc-dist">${b.dist}km away</div>
+          </div>
+          <div class="bc-rating">⭐ ${b.rating}</div>
+        </div>
+        <button class="book-btn">Book Now →</button>
+      </div>
+    </div>`).join('');
+}
+renderBikes(bikes);
+
+function filterBikes(){
+  const type=document.getElementById('fType').value;
+  const max=parseInt(document.getElementById('priceRange').value);
+  renderBikes(bikes.filter(b=>(type==='all'||b.type===type)&&b.price<=max));
+}
+
+let selBike=null;
+function openBook(id){
+  selBike=bikes.find(b=>b.id===id);
+  document.getElementById('modalBody').innerHTML=`
+    <h3>${selBike.emoji} Book ${selBike.name}</h3>
+    <div class="mfg"><label>Pickup Date</label><input type="date" id="bd" value="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="mfg"><label>Pickup Time</label><input type="time" id="bt" style="color:var(--white);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;padding:.65rem 1rem;width:100%;font-family:Outfit,sans-serif;font-size:.88rem;outline:none" value="10:00"></div>
+    <div class="mfg"><label>Duration</label>
+      <select id="bh" onchange="updTotal()">
+        <option value="1">1 Hour</option><option value="2">2 Hours</option><option value="3">3 Hours</option>
+        <option value="4">4 Hours</option><option value="6">6 Hours (Half-Day)</option><option value="24">24 Hours</option>
+      </select></div>
+    <div class="mfg"><label>Your Name</label><input id="bn" placeholder="Enter full name"></div>
+    <div class="mfg"><label>Phone Number</label><input id="bp" placeholder="+91 XXXXX XXXXX" type="tel"></div>
+    <div class="total-box">
+      <div class="tr"><span>Rate</span><span>₹${selBike.price}/hr</span></div>
+      <div class="tr" id="tDur"><span>Duration</span><span>1 hr</span></div>
+      <div class="tr" id="tSub"><span>Subtotal</span><span>₹${selBike.price}</span></div>
+      <div class="tr"><span>Insurance</span><span>₹20</span></div>
+      <div class="tr main" id="tTotal"><span>Total</span><span>₹${selBike.price+20}</span></div>
+    </div>
+    <button class="confirm-btn" onclick="confirmBook()">Confirm & Pay →</button>`;
+  document.getElementById('bookModal').classList.add('on');
+}
+
+function updTotal(){
+  if(!selBike)return;
+  const h=parseInt(document.getElementById('bh').value);
+  const sub=selBike.price*h;
+  document.getElementById('tDur').innerHTML=`<span>Duration</span><span>${h} hr${h>1?'s':''}</span>`;
+  document.getElementById('tSub').innerHTML=`<span>Subtotal</span><span>₹${sub}</span>`;
+  document.getElementById('tTotal').innerHTML=`<span>Total</span><span>₹${sub+20}</span>`;
+}
+
+function confirmBook(){
+  const name=document.getElementById('bn')?.value?.trim();
+  const phone=document.getElementById('bp')?.value?.trim();
+  if(!name||!phone){alert('Please fill your name and phone number');return;}
+  const rid='WZ'+Math.floor(Math.random()*900000+100000);
+  document.getElementById('modalBody').innerHTML=`
+    <div class="success-wrap">
+      <div class="success-emoji">🎉</div>
+      <h4>Booking Confirmed!</h4>
+      <p>Your ride is booked and secured by WheelGuard IoT.</p>
+      <div class="booking-id">Booking ID: ${rid}</div>
+      <p style="margin-top:.5rem;font-size:.82rem;color:var(--muted)">SMS confirmation sent. Owner will contact you shortly.</p>
+      <button class="confirm-btn" style="margin-top:1.5rem" onclick="closeModal()">Done ✓</button>
+    </div>`;
+}
+
+function closeModal(){
+  document.getElementById('bookModal').classList.remove('on');
+}
+document.getElementById('bookModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+</script>
+</body>
+</html>
